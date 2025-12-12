@@ -1,0 +1,3898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InnovateIT - Capstone Title & Idea Generator</title>
+    <meta name="description" content="Generate IT/IS capstone project titles and ideas. Software, IoT, and Integrated project ideas for students and researchers.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --accent: #CFA500;
+            --accent-light: #ffd95c;
+            --border: #dee2e6;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --radius: 1rem;
+            --radius-lg: 2rem;
+            --transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            --bg-primary: #000000;
+            --bg-secondary: #121212;
+            --bg-card: #1e1e1e;
+            --text-primary: #f8f9fa;
+            --text-secondary: #adb5bd;
+            --accent: #CFA500;
+            --accent-light: #e6b800;
+            --border: #2d2d2d;
+            --shadow: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: var(--transition);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header & Navigation */
+        header {
+            background-color: var(--bg-card);
+            box-shadow: 0 4px 12px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--bg-primary);
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .logo-text span {
+            color: var(--accent);
+        }
+
+        .nav-desktop {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .nav-desktop {
+                display: none;
+            }
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover {
+            background-color: var(--bg-secondary);
+            color: var(--accent);
+        }
+
+        .nav-link.active {
+            background-color: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .nav-link.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background-color: var(--bg-secondary);
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+        }
+
+        .avatar-initials {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            color: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1rem;
+            border: 2px solid var(--accent);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-light);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--border);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0.5rem;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-primary);
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+        }
+
+        .mobile-nav {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            background-color: var(--bg-card);
+            box-shadow: 0 10px 20px var(--shadow);
+            padding: 1rem;
+            display: none;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 999;
+        }
+
+        .mobile-nav.active {
+            display: flex;
+        }
+
+        /* Main Content */
+        main {
+            padding: 2rem 0;
+            min-height: calc(100vh - 140px);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--accent);
+            border-radius: 2px;
+        }
+
+        /* Dashboard */
+        .dashboard-hero {
+            text-align: center;
+            padding: 3rem 1rem;
+            background-color: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            margin-bottom: 3rem;
+            box-shadow: 0 8px 30px var(--shadow);
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .generator-container {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: 0 10px 30px var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .generator-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .category-filter {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 0.5rem 1.25rem;
+            background-color: var(--bg-secondary);
+            border: none;
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .category-btn.active {
+            background-color: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .idea-display {
+            background-color: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 5px solid var(--accent);
+        }
+
+        .idea-title {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .idea-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background-color: var(--accent);
+            color: var(--bg-primary);
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .idea-description {
+            font-size: 1.125rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .related-links {
+            margin-top: 1.5rem;
+        }
+
+        .related-links h4 {
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .links-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .link-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: var(--transition);
+            border: 1px solid var(--border);
+        }
+
+        .link-item:hover {
+            background-color: var(--accent);
+            color: var(--bg-primary);
+            transform: translateX(5px);
+        }
+
+        .idea-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Forms */
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Roboto', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(207, 165, 0, 0.2);
+        }
+
+        .form-textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .url-input-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .url-input-group .form-input {
+            flex: 1;
+        }
+
+        .url-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .url-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background-color: var(--bg-secondary);
+            border-radius: var(--radius);
+        }
+
+        .url-text {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Feed */
+        .feed-container {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .post-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .post-author {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .post-date {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .post-content {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+
+        .post-image {
+            max-width: 100%;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+            max-height: 400px;
+            object-fit: cover;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: var(--radius);
+            transition: var(--transition);
+        }
+
+        .action-btn:hover {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .action-btn.liked {
+            color: var(--danger);
+        }
+
+        .comments-section {
+            margin-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .comment-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .comment-item {
+            display: flex;
+            gap: 1rem;
+            padding: 0.75rem;
+            background-color: var(--bg-secondary);
+            border-radius: var(--radius);
+        }
+
+        /* Chat */
+        .chat-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 1.5rem;
+            height: 70vh;
+        }
+
+        @media (max-width: 992px) {
+            .chat-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+        }
+
+        .users-list {
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .users-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            background-color: var(--bg-secondary);
+        }
+
+        .user-search {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .users-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            cursor: pointer;
+            border-radius: var(--radius);
+            transition: var(--transition);
+        }
+
+        .user-item:hover,
+        .user-item.active {
+            background-color: var(--bg-secondary);
+        }
+
+        .user-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: auto;
+        }
+
+        .user-status.online {
+            background-color: var(--success);
+        }
+
+        .user-status.offline {
+            background-color: var(--text-secondary);
+        }
+
+        .chat-window {
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .chat-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            background-color: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius);
+            position: relative;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background-color: var(--accent);
+            color: var(--bg-primary);
+            border-bottom-right-radius: 0;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            border-bottom-left-radius: 0;
+        }
+
+        .message-image {
+            max-width: 100%;
+            border-radius: var(--radius);
+            margin-top: 0.5rem;
+            max-height: 200px;
+            object-fit: cover;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            margin-top: 0.25rem;
+            text-align: right;
+        }
+
+        .chat-input-area {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .image-upload-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius);
+            background-color: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        /* Settings */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .settings-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-checkbox {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--bg-secondary);
+            border-radius: 34px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: var(--bg-primary);
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .toggle-checkbox:checked + .toggle-slider {
+            background-color: var(--accent);
+        }
+
+        .toggle-checkbox:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        /* About Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            padding: 1rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.75rem;
+            color: var(--text-primary);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--bg-secondary);
+            padding: 2rem 1rem;
+            border-top: 2px solid var(--accent);
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Loading & Empty States */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--border);
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+            border-left: 4px solid var(--success);
+        }
+
+        .alert-error {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+            border-left: 4px solid var(--danger);
+        }
+
+        .alert-warning {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning);
+            border-left: 4px solid var(--warning);
+        }
+
+        .alert-info {
+            background-color: rgba(23, 162, 184, 0.1);
+            color: var(--info);
+            border-left: 4px solid var(--info);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .generator-controls {
+                flex-direction: column;
+            }
+            
+            .idea-actions {
+                flex-direction: column;
+            }
+            
+            .chat-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header>
+        <div class="container header-container">
+            <a href="#" class="logo" onclick="showSection('dashboard'); return false;">
+                <div class="logo-text">Innovate<span>IT</span></div>
+            </a>
+            
+            <nav class="nav-desktop">
+                <a href="#" class="nav-link active" onclick="showSection('dashboard'); return false;">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a href="#" class="nav-link" id="addIdeaLink" onclick="showSection('addIdea'); return false;">
+                    <i class="fas fa-lightbulb"></i> Add Idea
+                </a>
+                <a href="#" class="nav-link" onclick="showSection('feed'); return false;">
+                    <i class="fas fa-newspaper"></i> Public Feed
+                </a>
+                <a href="#" class="nav-link" onclick="showSection('chat'); return false;">
+                    <i class="fas fa-comments"></i> Chat
+                </a>
+                <a href="#" class="nav-link" onclick="showSection('settings'); return false;">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+            </nav>
+            
+            <div class="user-section">
+                <div id="authButtons">
+                    <button class="btn btn-outline btn-small" onclick="showLoginModal()">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+                </div>
+                <div id="userInfo" style="display: none;">
+                    <div id="userAvatar" class="avatar-initials"></div>
+                    <button class="btn btn-secondary btn-small" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+                
+                <button class="hamburger" id="hamburgerBtn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav" id="mobileNav">
+            <a href="#" class="nav-link active" onclick="showSection('dashboard'); toggleMobileNav(); return false;">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="#" class="nav-link" id="mobileAddIdeaLink" onclick="showSection('addIdea'); toggleMobileNav(); return false;">
+                <i class="fas fa-lightbulb"></i> Add Idea
+            </a>
+            <a href="#" class="nav-link" onclick="showSection('feed'); toggleMobileNav(); return false;">
+                <i class="fas fa-newspaper"></i> Public Feed
+            </a>
+            <a href="#" class="nav-link" onclick="showSection('chat'); toggleMobileNav(); return false;">
+                <i class="fas fa-comments"></i> Chat
+            </a>
+            <a href="#" class="nav-link" onclick="showSection('settings'); toggleMobileNav(); return false;">
+                <i class="fas fa-cog"></i> Settings
+            </a>
+            <div class="mobile-auth" id="mobileAuthButtons">
+                <button class="btn btn-outline btn-small" style="width: 100%; margin-top: 1rem;" onclick="showLoginModal(); toggleMobileNav();">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </div>
+            <div id="mobileUserInfo" style="display: none;">
+                <button class="btn btn-secondary btn-small" style="width: 100%; margin-top: 1rem;" onclick="logout(); toggleMobileNav();">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Dashboard Section -->
+        <section id="dashboardSection" class="section">
+            <div class="dashboard-hero">
+                <h1 class="hero-title">IT/IS Capstone Title & Idea Generator</h1>
+                <p class="hero-subtitle">Generate innovative capstone project ideas for Software, IoT, and Integrated projects. Perfect for students and researchers looking for inspiration.</p>
+                <button class="btn btn-primary" onclick="generateIdea()">
+                    <i class="fas fa-bolt"></i> Generate Idea
+                </button>
+            </div>
+            
+            <div class="generator-container">
+                <h2 class="section-title">Idea Generator</h2>
+                
+                <div class="generator-controls">
+                    <div class="category-filter">
+                        <button class="category-btn active" onclick="setCategoryFilter('all')">All Categories</button>
+                        <button class="category-btn" onclick="setCategoryFilter('software')">Software</button>
+                        <button class="category-btn" onclick="setCategoryFilter('iot')">IoT Based</button>
+                        <button class="category-btn" onclick="setCategoryFilter('integrated')">Integrated</button>
+                    </div>
+                    
+                    <button class="btn btn-secondary" onclick="saveFavorite()" id="saveFavoriteBtn">
+                        <i class="far fa-heart"></i> Save to Favorites
+                    </button>
+                </div>
+                
+                <div class="idea-display" id="ideaDisplay">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Click "Generate Idea" to get started</p>
+                    </div>
+                </div>
+                
+                <div class="idea-actions">
+                    <button class="btn btn-primary" onclick="generateIdea()">
+                        <i class="fas fa-redo"></i> Generate Another
+                    </button>
+                    <button class="btn btn-outline" onclick="showFavorites()">
+                        <i class="fas fa-star"></i> View Favorites
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportFavorites()">
+                        <i class="fas fa-download"></i> Export Favorites
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Favorites Modal -->
+            <div class="modal-overlay" id="favoritesModal">
+                <div class="modal">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Your Favorite Ideas</h3>
+                        <button class="close-modal" onclick="closeFavorites()">&times;</button>
+                    </div>
+                    <div id="favoritesList" class="links-list">
+                        <!-- Favorites will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Add Idea Section -->
+        <section id="addIdeaSection" class="section" style="display: none;">
+            <h2 class="section-title">Add New Capstone Idea</h2>
+            
+            <div class="form-container">
+                <div id="addIdeaForm">
+                    <div class="form-group">
+                        <label for="ideaTitle" class="form-label">Project Title</label>
+                        <input type="text" id="ideaTitle" class="form-input" placeholder="Enter a descriptive title for your capstone idea">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ideaCategory" class="form-label">Category</label>
+                        <select id="ideaCategory" class="form-select">
+                            <option value="software">Software</option>
+                            <option value="iot">IoT Based</option>
+                            <option value="integrated">Integrated (Software + IoT)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ideaDescription" class="form-label">Description</label>
+                        <textarea id="ideaDescription" class="form-textarea" placeholder="Describe the project in detail (2-3 sentences)"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Related Study Links</label>
+                        <div class="url-input-group">
+                            <input type="url" id="ideaLink" class="form-input" placeholder="https://example.com/research-paper">
+                            <button type="button" class="btn btn-secondary" onclick="addLink()">Add Link</button>
+                        </div>
+                        <div id="linksList" class="url-list">
+                            <!-- Links will be added here -->
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Your idea will be added to the public generator pool for all users to see.
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="submitIdea()">
+                        <i class="fas fa-plus"></i> Submit Idea
+                    </button>
+                </div>
+                
+                <div id="addIdeaLoginPrompt" style="display: none; text-align: center; padding: 3rem;">
+                    <div class="empty-icon">
+                        <i class="fas fa-user-lock"></i>
+                    </div>
+                    <h3>Sign In Required</h3>
+                    <p>You need to be logged in to submit new capstone ideas to the public pool.</p>
+                    <button class="btn btn-primary" onclick="showLoginModal()">
+                        <i class="fas fa-sign-in-alt"></i> Sign In Now
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Public Feed Section -->
+        <section id="feedSection" class="section" style="display: none;">
+            <h2 class="section-title">Public Feed</h2>
+            
+            <div class="form-container" style="margin-bottom: 2rem;">
+                <div id="feedPostForm">
+                    <div class="form-group">
+                        <label for="postContent" class="form-label">Share your thoughts</label>
+                        <textarea id="postContent" class="form-textarea" placeholder="What's on your mind?"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Add Image (Optional)</label>
+                        <input type="file" id="postImage" accept="image/*" class="form-input" onchange="previewImage()">
+                        <div id="imagePreview" style="margin-top: 1rem; display: none;">
+                            <img id="previewImage" style="max-width: 200px; border-radius: var(--radius);">
+                            <button type="button" class="btn btn-small btn-secondary" onclick="clearImagePreview()" style="margin-top: 0.5rem;">
+                                <i class="fas fa-times"></i> Remove Image
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="createPost()">
+                        <i class="fas fa-paper-plane"></i> Post to Feed
+                    </button>
+                </div>
+                
+                <div id="feedLoginPrompt" style="display: none; text-align: center; padding: 2rem;">
+                    <p>Please sign in to post to the feed and interact with others.</p>
+                    <button class="btn btn-primary" onclick="showLoginModal()">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+                </div>
+            </div>
+            
+            <div class="feed-container" id="feedContainer">
+                <!-- Feed posts will be loaded here -->
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Loading feed...</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Chat Section -->
+        <section id="chatSection" class="section" style="display: none;">
+            <h2 class="section-title">Chat with Users</h2>
+            
+            <div class="chat-container">
+                <div class="users-list">
+                    <div class="users-header">
+                        <input type="text" class="user-search" placeholder="Search users..." oninput="searchUsers(this.value)">
+                    </div>
+                    <div class="users-scroll" id="usersList">
+                        <!-- Users will be loaded here -->
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <p>Loading users...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-window">
+                    <div class="chat-header" id="chatHeader">
+                        <div id="chatPartnerInfo" style="display: flex; align-items: center; gap: 1rem;">
+                            <div class="avatar-initials" id="chatPartnerAvatar">?</div>
+                            <div>
+                                <div id="chatPartnerName">Select a user to start chatting</div>
+                                <div id="chatPartnerStatus" class="user-status offline"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="messages-container" id="messagesContainer">
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-comment-slash"></i>
+                            </div>
+                            <p>Select a user from the list to start chatting</p>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-area" id="chatInputArea" style="display: none;">
+                        <input type="text" class="chat-input" id="messageInput" placeholder="Type your message..." onkeypress="if(event.key === 'Enter') sendMessage()">
+                        <label for="chatImageUpload" class="image-upload-btn">
+                            <i class="fas fa-image"></i>
+                        </label>
+                        <input type="file" id="chatImageUpload" accept="image/*" style="display: none;" onchange="sendImageMessage()">
+                        <button class="btn btn-primary" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Settings Section -->
+        <section id="settingsSection" class="section" style="display: none;">
+            <h2 class="section-title">Settings</h2>
+            
+            <div class="settings-grid">
+                <div class="settings-card">
+                    <h3 style="margin-bottom: 1rem;">Appearance</h3>
+                    <div class="theme-toggle">
+                        <span>Dark Mode</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="settings-card">
+                    <h3 style="margin-bottom: 1rem;">Account</h3>
+                    <div class="form-group">
+                        <button class="btn btn-secondary" style="width: 100%; margin-bottom: 1rem;" onclick="changePassword()">
+                            <i class="fas fa-key"></i> Change Password
+                        </button>
+                        <button class="btn btn-outline" style="width: 100%;" onclick="showAboutModal()">
+                            <i class="fas fa-info-circle"></i> About InnovateIT
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="settings-card" id="adminPanel" style="display: none;">
+                    <h3 style="margin-bottom: 1rem; color: var(--danger);">
+                        <i class="fas fa-shield-alt"></i> Admin Panel
+                    </h3>
+                    <p style="margin-bottom: 1rem; font-size: 0.875rem;">Moderate content and manage users.</p>
+                    <button class="btn btn-secondary" style="width: 100%;" onclick="showAdminModal()">
+                        <i class="fas fa-tools"></i> Open Admin Panel
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-text">
+                &copy; 2023 InnovateIT - Capstone Idea Generator. All rights reserved.
+            </div>
+            <div class="footer-text">
+                <i class="fas fa-bolt" style="color: var(--accent);"></i> Powered by Wxyz Development
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Sign In to InnovateIT</h3>
+                <button class="close-modal" onclick="closeLoginModal()">&times;</button>
+            </div>
+            
+            <div id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail" class="form-label">Email</label>
+                    <input type="email" id="loginEmail" class="form-input" placeholder="your@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword" class="form-label">Password</label>
+                    <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password">
+                </div>
+                
+                <button class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;" onclick="login()">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+                
+                <button class="btn btn-secondary" style="width: 100%; margin-bottom: 1.5rem;" onclick="signup()">
+                    <i class="fas fa-user-plus"></i> Create New Account
+                </button>
+                
+                <div style="text-align: center; margin-bottom: 1.5rem; color: var(--text-secondary);">
+                    Or sign in with
+                </div>
+                
+                <button class="btn btn-outline" style="width: 100%;" onclick="loginWithGoogle()">
+                    <i class="fab fa-google"></i> Sign in with Google
+                </button>
+            </div>
+            
+            <div id="resetPasswordForm" style="display: none;">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Enter your email to receive a password reset link.
+                </div>
+                
+                <div class="form-group">
+                    <label for="resetEmail" class="form-label">Email</label>
+                    <input type="email" id="resetEmail" class="form-input" placeholder="your@email.com">
+                </div>
+                
+                <button class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;" onclick="sendPasswordReset()">
+                    <i class="fas fa-paper-plane"></i> Send Reset Link
+                </button>
+                
+                <button class="btn btn-secondary" style="width: 100%;" onclick="showLoginForm()">
+                    <i class="fas fa-arrow-left"></i> Back to Login
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div class="modal-overlay" id="aboutModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">About InnovateIT</h3>
+                <button class="close-modal" onclick="closeAboutModal()">&times;</button>
+            </div>
+            
+            <div style="line-height: 1.7;">
+                <p style="margin-bottom: 1rem;">InnovateIT is a comprehensive IT/IS Capstone Title & Idea Generator designed to help students, researchers, and educators find inspiration for their capstone projects.</p>
+                
+                <h4 style="margin: 1.5rem 0 0.75rem;">Features:</h4>
+                <ul style="margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                    <li>Generate capstone ideas across Software, IoT, and Integrated categories</li>
+                    <li>Add your own ideas to the public pool</li>
+                    <li>Share thoughts and images in the public feed</li>
+                    <li>Chat privately with other users</li>
+                    <li>Save favorite ideas for later reference</li>
+                </ul>
+                
+                <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: var(--radius); margin: 1.5rem 0; border-left: 4px solid var(--accent);">
+                    <p style="font-style: italic; margin-bottom: 0.5rem;">"This Website is Well Developed by Steven Macapañas, The Man Behind Wxyz Development."</p>
+                </div>
+                
+                <p style="margin-top: 1.5rem; font-size: 0.875rem; color: var(--text-secondary);">
+                    Built with HTML, CSS, JavaScript, and Firebase. This application runs entirely client-side with a single HTML file.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div class="modal-overlay" id="adminModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" style="color: var(--danger);">
+                    <i class="fas fa-shield-alt"></i> Admin Panel
+                </h3>
+                <button class="close-modal" onclick="closeAdminModal()">&times;</button>
+            </div>
+            
+            <div>
+                <div class="form-group">
+                    <label class="form-label">Content Moderation</label>
+                    <select id="moderationType" class="form-select" onchange="loadModerationContent()">
+                        <option value="ideas">Capstone Ideas</option>
+                        <option value="posts">Feed Posts</option>
+                        <option value="comments">Comments</option>
+                    </select>
+                </div>
+                
+                <div id="moderationContent" style="max-height: 400px; overflow-y: auto; margin-top: 1rem;">
+                    <!-- Content to moderate will be loaded here -->
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Loading content...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Container -->
+    <div id="alertContainer" style="position: fixed; top: 20px; right: 20px; z-index: 1002; max-width: 400px;"></div>
+
+    <!-- Main Application Script -->
+    <script>
+        /*
+         * INNOVATEIT - IT/IS Capstone Title & Idea Generator
+         * 
+         * README:
+         * 1. This is a single-file web application using HTML, CSS, and JavaScript
+         * 2. Firebase is used for Authentication and Firestore database
+         * 3. To configure Firebase for your own project:
+         *    - Create a Firebase project at https://console.firebase.google.com
+         *    - Enable Authentication (Email/Password and Google Sign-In)
+         *    - Create a Firestore database
+         *    - Update the firebaseConfig object below with your project credentials
+         *    - Set up Firestore security rules (provided below)
+         * 4. To run: Simply open this index.html file in a modern web browser
+         * 
+         * Firestore Security Rules:
+         * 
+         * rules_version = '2';
+         * service cloud.firestore {
+         *   match /databases/{database}/documents {
+         *     // Public read access for ideas
+         *     match /ideas/{ideaId} {
+         *       allow read: if true;
+         *       allow write: if request.auth != null;
+         *     }
+         *     
+         *     // Users can read all user data, but only update their own
+         *     match /users/{userId} {
+         *       allow read: if true;
+         *       allow write: if request.auth != null && request.auth.uid == userId;
+         *       allow create: if request.auth != null;
+         *     }
+         *     
+         *     // Feed posts - authenticated users can create, read, update own
+         *     match /feed/{postId} {
+         *       allow read: if true;
+         *       allow create: if request.auth != null;
+         *       allow update, delete: if request.auth != null && request.auth.uid == resource.data.authorUid;
+         *     }
+         *     
+         *     // Comments - authenticated users can create, read, update own
+         *     match /feed/{postId}/comments/{commentId} {
+         *       allow read: if true;
+         *       allow create: if request.auth != null;
+         *       allow update, delete: if request.auth != null && request.auth.uid == resource.data.authorUid;
+         *     }
+         *     
+         *     // Chats - users can only access their own conversations
+         *     match /chats/{chatId} {
+         *       allow read, write: if request.auth != null && request.auth.uid in resource.data.participants;
+         *     }
+         *     
+         *     // Favorites - users can only access their own favorites
+         *     match /favorites/{userId}/{favoriteId} {
+         *       allow read, write: if request.auth != null && request.auth.uid == userId;
+         *     }
+         *   }
+         * }
+         */
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCxRD1pHGRIZYegHkPGtvRSxkY_PkOBmpA",
+            authDomain: "innovateit-49e39.firebaseapp.com",
+            projectId: "innovateit-49e39",
+            storageBucket: "innovateit-49e39.firebasestorage.app",
+            messagingSenderId: "813354776612",
+            appId: "1:813354776612:web:ecaa62d3e6bcf3517500b1",
+            measurementId: "G-F3FCZ6VM8V"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Global variables
+        let currentUser = null;
+        let currentSection = 'dashboard';
+        let currentCategoryFilter = 'all';
+        let currentIdea = null;
+        let currentChatPartner = null;
+        let chatListeners = {};
+        let feedListeners = [];
+        let users = [];
+        let seededIdeas = [];
+        let userIdeas = [];
+        let allIdeas = [];
+
+        // Seed Data - 60 Capstone Ideas (20 Software, 20 IoT, 20 Integrated)
+        const seedIdeas = [
+            // Software Ideas (20)
+            {
+                id: 'soft1',
+                title: 'AI-Powered Code Review Assistant',
+                description: 'A machine learning system that analyzes code submissions and provides intelligent feedback on code quality, security vulnerabilities, and best practices. The system learns from historical code reviews to improve its suggestions over time.',
+                category: 'software',
+                relatedLinks: [
+                    'https://arxiv.org/abs/2002.08155',
+                    'https://dl.acm.org/doi/10.1145/3236024.3236064'
+                ],
+                seeded: true
+            },
+            {
+                id: 'soft2',
+                title: 'Blockchain-Based Academic Credential Verification',
+                description: 'A decentralized system for issuing and verifying academic certificates using blockchain technology. This prevents credential fraud and provides instant verification for employers and institutions.',
+                category: 'software',
+                relatedLinks: [
+                    'https://ieeexplore.ieee.org/document/8726225',
+                    'https://www.sciencedirect.com/science/article/pii/S0360131519302586'
+                ],
+                seeded: true
+            },
+            {
+                id: 'soft3',
+                title: 'Personalized Learning Path Recommender System',
+                description: 'An adaptive learning platform that recommends personalized educational content based on student performance, learning style, and career goals using collaborative filtering algorithms.',
+                category: 'software',
+                relatedLinks: [
+                    'https://educationaltechnologyjournal.springeropen.com/articles/10.1186/s41239-019-0143-4',
+                    'https://dl.acm.org/doi/10.1145/3170358.3170408'
+                ],
+                seeded: true
+            },
+            {
+                id: 'soft4',
+                title: 'Real-Time Collaborative Code Editor with Video Conferencing',
+                description: 'A web-based IDE that allows multiple developers to code together in real-time with integrated video chat, screen sharing, and version control features.',
+                category: 'software',
+                relatedLinks: [
+                    'https://dl.acm.org/doi/10.1145/3313831.3376780',
+                    'https://ieeexplore.ieee.org/document/8817083'
+                ],
+                seeded: true
+            },
+            {
+                id: 'soft5',
+                title: 'Automated Software Testing Using Genetic Algorithms',
+                description: 'A test generation tool that uses genetic algorithms to automatically create test cases that maximize code coverage and find edge cases more effectively than random testing.',
+                category: 'software',
+                relatedLinks: [
+                    'https://ieeexplore.ieee.org/document/7880270',
+                    'https://dl.acm.org/doi/10.1145/3236024.3236078'
+                ],
+                seeded: true
+            },
+            {
+                id: 'soft6',
+                title: 'Mental Health Chatbot with Emotion Recognition',
+                description: 'A conversational AI assistant that provides mental health support, recognizes user emotions through text analysis, and recommends appropriate coping strategies or professional help.',
+                category: 'software',
+                relatedLinks: [
+                    'https://www.nature.com/articles/s41746-020-0285-8',
+                    'https://dl.acm.org/doi/10.1145/3313831.3376168'
+                ],
+                seeded: true
+            },
+            {
+                id: 'soft7',
+                title: 'Predictive Maintenance System for Manufacturing',
+                description: 'A software system that uses machine learning to predict equipment failures in manufacturing plants by analyzing sensor data and maintenance records.',
+                category: 'software',
+                relatedLinks: [
+                    'https://ieeexplore.ieee.org/document/8744192',
+                    'https://www.sciencedirect.com/science/article/pii/S0957417419305279'
+                ],
+                seeded: true
+            },
+            {
+                id: 'soft8',
+                title: 'Augmented Reality Historical Site Visualization',
+                description: 'A mobile application that uses AR to overlay historical information and reconstructions onto real-world views of archaeological sites and historical landmarks.',
+                category: 'software',
+                relatedLinks: [
+                    'https://link.springer.com/article/10.1007/s10055-019-00401-0',
+                    'https://dl.acm.org/doi/10.1145/3313831.3376800'
+                ],
+                seeded: true
+            },
+            {
+                id: 'soft9',
+                title: 'Smart Contract Auditor for Ethereum',
+                description: 'A tool that automatically analyzes Ethereum smart contracts for security vulnerabilities, gas optimization opportunities, and compliance with best practices.',
+                category: 'software',
+                relatedLinks: [
+                    'https://dl.acm.org/doi/10.1145/3243734.3243780',
+                    'https://ieeexplore.ieee.org/document/8835315'
+                ],
+                seeded: true
+            },
+            {
+                id: 'soft10',
+                title: 'Cross-Platform Mobile App for Disaster Response',
+                description: 'A React Native application that connects disaster victims with responders, provides real-time hazard maps, and coordinates relief efforts through a centralized platform.',
+                category: 'software',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S259006172030028X',
+                    'https://dl.acm.org/doi/10.1145/3377811.3380394'
+                ],
+                seeded: true
+            },
+            {
+                id: 'soft11',
+                title: 'Automated Essay Scoring with Plagiarism Detection',
+                description: 'A natural language processing system that evaluates student essays for content quality, writing style, and originality while detecting potential plagiarism.',
+                category: 'software',
+                relatedLinks: [
+                    'https://educationaltechnologyjournal.springeropen.com/articles/10.1186/s41239-019-0171-0',
+                    'https://dl.acm.org/doi/10.1145/3330430.3333642'
+                ],
+                seeded: true
+            },
+            {
+                id: 'soft12',
+                title: 'Video Summarization for Lecture Content',
+                description: 'An AI system that automatically generates concise summaries of educational videos by identifying key concepts, extracting important frames, and creating highlight reels.',
+                category: 'software',
+                relatedLinks: [
+                    'https://ieeexplore.ieee.org/document/9006047',
+                    'https://dl.acm.org/doi/10.1145/3377811.3380402'
+                ],
+                seeded: true
+            },
+            {
+                id: 'soft13',
+                title: 'Accessibility-First Web Development Framework',
+                description: 'A framework that enforces WCAG 2.1 compliance by design, providing components and tools that make creating accessible websites easier for developers.',
+                category: 'software',
+                relatedLinks: [
+                    'https://dl.acm.org/doi/10.1145/3313831.3376165',
+                    'https://www.w3.org/WAI/standards-guidelines/wcag/'
+                ],
+                seeded: true
+            },
+            {
+                id: 'soft14',
+                title: 'Real-Time Stock Market Sentiment Analysis',
+                description: 'A platform that analyzes social media, news articles, and financial reports in real-time to predict stock price movements based on market sentiment.',
+                category: 'software',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S0957417419306525',
+                    'https://dl.acm.org/doi/10.1145/3383455.3422556'
+                ],
+                seeded: true
+            },
+            {
+                id: 'soft15',
+                title: 'Automated API Documentation Generator',
+                description: 'A tool that analyzes source code and automatically generates comprehensive, up-to-date API documentation with interactive examples and testing capabilities.',
+                category: 'software',
+                relatedLinks: [
+                    'https://ieeexplore.ieee.org/document/8817118',
+                    'https://dl.acm.org/doi/10.1145/3180155.3180241'
+                ],
+                seeded: true
+            },
+            {
+                id: 'soft16',
+                title: 'Privacy-Preserving Data Analytics Platform',
+                description: 'A system that allows organizations to perform analytics on sensitive data without exposing individual records, using techniques like differential privacy and homomorphic encryption.',
+                category: 'software',
+                relatedLinks: [
+                    'https://dl.acm.org/doi/10.1145/3133956.3134082',
+                    'https://ieeexplore.ieee.org/document/7958568'
+                ],
+                seeded: true
+            },
+            {
+                id: 'soft17',
+                title: 'Automated Meeting Minutes Generator',
+                description: 'A tool that records meetings, transcribes speech, identifies action items and decisions, and generates structured minutes automatically.',
+                category: 'software',
+                relatedLinks: [
+                    'https://dl.acm.org/doi/10.1145/3290605.3300515',
+                    'https://ieeexplore.ieee.org/document/9053059'
+                ],
+                seeded: true
+            },
+            {
+                id: 'soft18',
+                title: 'Code Quality Metrics Dashboard for Teams',
+                description: 'A visualization platform that aggregates code quality metrics across repositories, tracking technical debt, test coverage, and complexity trends over time.',
+                category: 'software',
+                relatedLinks: [
+                    'https://ieeexplore.ieee.org/document/7880255',
+                    'https://dl.acm.org/doi/10.1145/3183440.3195044'
+                ],
+                seeded: true
+            },
+            {
+                id: 'soft19',
+                title: 'Automated Fairness Audit for Machine Learning Models',
+                description: 'A tool that analyzes ML models for bias across protected attributes (gender, race, age) and suggests mitigation strategies to ensure fairness in automated decisions.',
+                category: 'software',
+                relatedLinks: [
+                    'https://dl.acm.org/doi/10.1145/3351095.3372828',
+                    'https://www.sciencedirect.com/science/article/pii/S0004370220300235'
+                ],
+                seeded: true
+            },
+            {
+                id: 'soft20',
+                title: 'Interactive Data Visualization for COVID-19 Research',
+                description: 'A web application that visualizes pandemic data, research papers, and clinical trials to help researchers identify patterns and correlations in COVID-19 studies.',
+                category: 'software',
+                relatedLinks: [
+                    'https://www.nature.com/articles/s41597-020-00688-8',
+                    'https://dl.acm.org/doi/10.1145/3313831.3376658'
+                ],
+                seeded: true
+            },
+
+            // IoT Based Ideas (20)
+            {
+                id: 'iot1',
+                title: 'Smart Agriculture Monitoring System',
+                description: 'An IoT system that monitors soil moisture, temperature, humidity, and crop health using sensors, with automated irrigation control and pest detection capabilities.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://ieeexplore.ieee.org/document/8274987',
+                    'https://www.sciencedirect.com/science/article/pii/S2214317319300589'
+                ],
+                seeded: true
+            },
+            {
+                id: 'iot2',
+                title: 'Wearable Health Monitor for Elderly Care',
+                description: 'A wearable device that tracks vital signs, detects falls, and monitors medication adherence for elderly individuals, with emergency alerts to caregivers.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://ieeexplore.ieee.org/document/8735460',
+                    'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6382567/'
+                ],
+                seeded: true
+            },
+            {
+                id: 'iot3',
+                title: 'Smart Waste Management System',
+                description: 'IoT sensors in waste bins that monitor fill levels and optimize collection routes, reducing fuel consumption and improving urban cleanliness.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://ieeexplore.ieee.org/document/8614167',
+                    'https://www.sciencedirect.com/science/article/pii/S0959652619327246'
+                ],
+                seeded: true
+            },
+            {
+                id: 'iot4',
+                title: 'Intelligent Traffic Management System',
+                description: 'A network of cameras and sensors that monitor traffic flow, detect accidents, and dynamically adjust traffic light timings to reduce congestion.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://ieeexplore.ieee.org/document/8784639',
+                    'https://www.sciencedirect.com/science/article/pii/S0968090X19301195'
+                ],
+                seeded: true
+            },
+            {
+                id: 'iot5',
+                title: 'Water Quality Monitoring for Rivers and Lakes',
+                description: 'Buoy-based IoT sensors that measure pH, turbidity, dissolved oxygen, and contaminants in water bodies, transmitting data in real-time for environmental monitoring.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://ieeexplore.ieee.org/document/8500576',
+                    'https://www.sciencedirect.com/science/article/pii/S0048969719327949'
+                ],
+                seeded: true
+            },
+            {
+                id: 'iot6',
+                title: 'Smart Parking System with Reservation',
+                description: 'Sensors that detect parking space occupancy and a mobile app that allows drivers to reserve spots in advance, reducing search time and congestion.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://ieeexplore.ieee.org/document/8274992',
+                    'https://www.sciencedirect.com/science/article/pii/S0968090X18315471'
+                ],
+                seeded: true
+            },
+            {
+                id: 'iot7',
+                title: 'Industrial Equipment Vibration Monitoring',
+                description: 'Wireless vibration sensors attached to industrial machinery that predict maintenance needs based on vibration patterns, preventing unexpected downtime.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://ieeexplore.ieee.org/document/8614105',
+                    'https://www.sciencedirect.com/science/article/pii/S095741741830409X'
+                ],
+                seeded: true
+            },
+            {
+                id: 'iot8',
+                title: 'Smart Home Energy Management System',
+                description: 'IoT devices that monitor and control home appliances, optimizing energy usage based on occupancy patterns and electricity pricing.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://ieeexplore.ieee.org/document/8735536',
+                    'https://www.sciencedirect.com/science/article/pii/S1364032119306012'
+                ],
+                seeded: true
+            },
+            {
+                id: 'iot9',
+                title: 'Precision Livestock Farming System',
+                description: 'Wearable sensors for livestock that monitor health, location, and behavior, enabling early disease detection and optimized feeding schedules.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S0168169919303262',
+                    'https://ieeexplore.ieee.org/document/8735589'
+                ],
+                seeded: true
+            },
+            {
+                id: 'iot10',
+                title: 'Air Quality Monitoring Network',
+                description: 'A distributed network of low-cost air quality sensors that measure PM2.5, PM10, CO2, and other pollutants, creating real-time pollution maps.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S0048969719344828',
+                    'https://ieeexplore.ieee.org/document/8735598'
+                ],
+                seeded: true
+            },
+            {
+                id: 'iot11',
+                title: 'Smart Retail Shelf Management',
+                description: 'IoT sensors on retail shelves that monitor inventory levels, detect misplaced items, and alert staff when restocking is needed.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://ieeexplore.ieee.org/document/8735562',
+                    'https://www.sciencedirect.com/science/article/pii/S0957417418307089'
+                ],
+                seeded: true
+            },
+            {
+                id: 'iot12',
+                title: 'Flood Early Warning System',
+                description: 'River level sensors and rainfall monitors that predict flooding and send alerts to vulnerable communities via SMS and mobile apps.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S2212420919308680',
+                    'https://ieeexplore.ieee.org/document/8735521'
+                ],
+                seeded: true
+            },
+            {
+                id: 'iot13',
+                title: 'Smart Street Lighting System',
+                description: 'IoT-connected street lights that adjust brightness based on pedestrian and vehicle traffic, weather conditions, and time of day to save energy.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://ieeexplore.ieee.org/document/8735601',
+                    'https://www.sciencedirect.com/science/article/pii/S1364032119306073'
+                ],
+                seeded: true
+            },
+            {
+                id: 'iot14',
+                title: 'Remote Patient Monitoring for Chronic Diseases',
+                description: 'IoT devices that monitor patients with chronic conditions like diabetes or hypertension at home, transmitting data to healthcare providers for proactive care.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6382569/',
+                    'https://ieeexplore.ieee.org/document/8735487'
+                ],
+                seeded: true
+            },
+            {
+                id: 'iot15',
+                title: 'Supply Chain Temperature Monitoring',
+                description: 'IoT temperature and humidity sensors for perishable goods during transportation, ensuring冷链 integrity and reducing spoilage.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S0959652619317190',
+                    'https://ieeexplore.ieee.org/document/8735543'
+                ],
+                seeded: true
+            },
+            {
+                id: 'iot16',
+                title: 'Smart Building Occupancy Optimization',
+                description: 'Sensors that detect room occupancy and adjust HVAC and lighting accordingly, reducing energy waste in commercial buildings.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://ieeexplore.ieee.org/document/8735578',
+                    'https://www.sciencedirect.com/science/article/pii/S037877881931014X'
+                ],
+                seeded: true
+            },
+            {
+                id: 'iot17',
+                title: 'Autonomous Water Leak Detection',
+                description: 'Acoustic sensors that detect water leaks in pipes by analyzing sound patterns, enabling early intervention before major damage occurs.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S0952197619301894',
+                    'https://ieeexplore.ieee.org/document/8735512'
+                ],
+                seeded: true
+            },
+            {
+                id: 'iot18',
+                title: 'Precision Irrigation with Soil Sensors',
+                description: 'An IoT system that measures soil moisture at different depths and controls irrigation valves to deliver precise amounts of water to crops.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S0168169919303948',
+                    'https://ieeexplore.ieee.org/document/8735503'
+                ],
+                seeded: true
+            },
+            {
+                id: 'iot19',
+                title: 'Wildlife Tracking and Conservation System',
+                description: 'GPS and environmental sensors attached to wildlife that track movements, behavior, and habitat use for conservation research.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S1574954119301286',
+                    'https://ieeexplore.ieee.org/document/8735494'
+                ],
+                seeded: true
+            },
+            {
+                id: 'iot20',
+                title: 'Smart Gym Equipment with Form Correction',
+                description: 'IoT sensors on exercise equipment that detect improper form and provide real-time feedback to prevent injuries and improve workout effectiveness.',
+                category: 'iot',
+                relatedLinks: [
+                    'https://ieeexplore.ieee.org/document/8735471',
+                    'https://www.sciencedirect.com/science/article/pii/S1877050919305300'
+                ],
+                seeded: true
+            },
+
+            // Integrated (Software + IoT) Ideas (20)
+            {
+                id: 'int1',
+                title: 'Smart City Digital Twin Platform',
+                description: 'An integrated platform that combines IoT sensor data from urban infrastructure with 3D visualization software to create a real-time digital replica of a city for planning and management.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S0166361519302939',
+                    'https://ieeexplore.ieee.org/document/8735612'
+                ],
+                seeded: true
+            },
+            {
+                id: 'int2',
+                title: 'Autonomous Drone Delivery System',
+                description: 'A complete system integrating IoT-enabled drones with route optimization software, package tracking, and automated docking stations for last-mile delivery.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S0968090X19301249',
+                    'https://ieeexplore.ieee.org/document/8735623'
+                ],
+                seeded: true
+            },
+            {
+                id: 'int3',
+                title: 'Smart Hospital Patient Flow Management',
+                description: 'IoT wearables for patients and staff combined with AI software that optimizes hospital operations, reduces wait times, and improves resource allocation.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6382571/',
+                    'https://ieeexplore.ieee.org/document/8735634'
+                ],
+                seeded: true
+            },
+            {
+                id: 'int4',
+                title: 'Precision Agriculture Decision Support System',
+                description: 'Combines drone/satellite imagery, ground sensors, and machine learning software to provide farmers with actionable insights for crop management.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S016816991930395X',
+                    'https://ieeexplore.ieee.org/document/8735645'
+                ],
+                seeded: true
+            },
+            {
+                id: 'int5',
+                title: 'Disaster Response Coordination Platform',
+                description: 'Integrates IoT sensors (seismic, weather), drone reconnaissance, and software for real-time coordination of emergency responders during natural disasters.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S2590061720300291',
+                    'https://ieeexplore.ieee.org/document/8735656'
+                ],
+                seeded: true
+            },
+            {
+                id: 'int6',
+                title: 'Autonomous Retail Store System',
+                description: 'A cashier-less store using IoT sensors, computer vision, and software that tracks items selected by customers and automatically processes payments.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S0957417419306604',
+                    'https://ieeexplore.ieee.org/document/8735667'
+                ],
+                seeded: true
+            },
+            {
+                id: 'int7',
+                title: 'Smart Grid Energy Management System',
+                description: 'Combines smart meters (IoT), renewable energy sources, and AI software to balance electricity supply and demand in real-time across the grid.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S1364032119306085',
+                    'https://ieeexplore.ieee.org/document/8735678'
+                ],
+                seeded: true
+            },
+            {
+                id: 'int8',
+                title: 'Industrial Digital Twin for Manufacturing',
+                description: 'IoT sensors on production equipment combined with simulation software that creates a virtual replica of manufacturing processes for optimization and predictive maintenance.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S0957417419306616',
+                    'https://ieeexplore.ieee.org/document/8735689'
+                ],
+                seeded: true
+            },
+            {
+                id: 'int9',
+                title: 'Intelligent Transportation System with V2X Communication',
+                description: 'Integrates vehicle sensors, roadside units (IoT), and cloud software to enable vehicle-to-everything communication for improved safety and traffic efficiency.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S0968090X19301250',
+                    'https://ieeexplore.ieee.org/document/8735690'
+                ],
+                seeded: true
+            },
+            {
+                id: 'int10',
+                title: 'Remote Surgery Assistance System',
+                description: 'Combines haptic feedback devices (IoT), real-time imaging, and telepresence software to enable remote surgical guidance and training.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6382573/',
+                    'https://ieeexplore.ieee.org/document/8735701'
+                ],
+                seeded: true
+            },
+            {
+                id: 'int11',
+                title: 'Environmental Monitoring and Prediction Platform',
+                description: 'Integrates various environmental sensors (IoT) with machine learning software to monitor ecosystems and predict changes like algal blooms or deforestation.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S004896971934483X',
+                    'https://ieeexplore.ieee.org/document/8735712'
+                ],
+                seeded: true
+            },
+            {
+                id: 'int12',
+                title: 'Smart Construction Site Safety System',
+                description: 'IoT wearables for workers, site sensors, and computer vision software that monitors construction sites for safety hazards and compliance with protocols.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S0957417419306628',
+                    'https://ieeexplore.ieee.org/document/8735723'
+                ],
+                seeded: true
+            },
+            {
+                id: 'int13',
+                title: 'Autonomous Greenhouse Management System',
+                description: 'Integrates environmental sensors, automated actuators (IoT), and AI software to optimize growing conditions in greenhouses without human intervention.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S0168169919303961',
+                    'https://ieeexplore.ieee.org/document/8735734'
+                ],
+                seeded: true
+            },
+            {
+                id: 'int14',
+                title: 'Smart Port Logistics Optimization',
+                description: 'Combines IoT sensors on containers and equipment with optimization software to streamline port operations, reducing ship turnaround time and congestion.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S0959652619317207',
+                    'https://ieeexplore.ieee.org/document/8735745'
+                ],
+                seeded: true
+            },
+            {
+                id: 'int15',
+                title: 'Personalized Nutrition and Health Monitoring',
+                description: 'IoT devices that track biometrics and food intake combined with AI software that provides personalized nutrition recommendations and health insights.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6382575/',
+                    'https://ieeexplore.ieee.org/document/8735756'
+                ],
+                seeded: true
+            },
+            {
+                id: 'int16',
+                title: 'Autonomous Warehouse Robotics System',
+                description: 'Mobile robots (IoT) coordinated by AI software that autonomously navigate warehouses, pick items, and manage inventory with minimal human intervention.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S095741741930663X',
+                    'https://ieeexplore.ieee.org/document/8735767'
+                ],
+                seeded: true
+            },
+            {
+                id: 'int17',
+                title: 'Smart Water Distribution Network',
+                description: 'IoT sensors throughout water distribution pipes combined with AI software that detects leaks, predicts demand, and optimizes pumping schedules.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S0952197619301900',
+                    'https://ieeexplore.ieee.org/document/8735778'
+                ],
+                seeded: true
+            },
+            {
+                id: 'int18',
+                title: 'Connected Vehicle Fleet Management',
+                description: 'IoT devices in vehicles combined with cloud software that monitors fleet performance, optimizes routes, and predicts maintenance needs for logistics companies.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S0968090X19301251',
+                    'https://ieeexplore.ieee.org/document/8735789'
+                ],
+                seeded: true
+            },
+            {
+                id: 'int19',
+                title: 'Smart Tourism Experience Platform',
+                description: 'Combines IoT beacons at attractions with mobile app software that provides personalized tours, real-time information, and augmented reality experiences for tourists.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S0261517719301044',
+                    'https://ieeexplore.ieee.org/document/8735790'
+                ],
+                seeded: true
+            },
+            {
+                id: 'int20',
+                title: 'Integrated Campus Safety and Management',
+                description: 'A comprehensive system combining IoT sensors across campus with software for emergency alerts, facility management, energy optimization, and student services.',
+                category: 'integrated',
+                relatedLinks: [
+                    'https://www.sciencedirect.com/science/article/pii/S0957417419306641',
+                    'https://ieeexplore.ieee.org/document/8735801'
+                ],
+                seeded: true
+            }
+        ];
+
+        // Application Initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            setupEventListeners();
+            checkAuthState();
+            loadSeededIdeas();
+            setupTheme();
+        });
+
+        function initializeApp() {
+            // Check for saved theme preference
+            const savedTheme = localStorage.getItem('innovateit-theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('themeToggle').checked = true;
+            }
+
+            // Set current year in footer
+            document.querySelector('.footer-text').innerHTML = `&copy; ${new Date().getFullYear()} InnovateIT. All rights reserved.`;
+        }
+
+        function setupEventListeners() {
+            // Hamburger menu
+            document.getElementById('hamburgerBtn').addEventListener('click', toggleMobileNav);
+
+            // Close modals when clicking outside
+            document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('active');
+                    }
+                });
+            });
+
+            // Handle enter key in message input
+            document.getElementById('messageInput')?.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        }
+
+        // Authentication Functions
+        function checkAuthState() {
+            auth.onAuthStateChanged(async (user) => {
+                currentUser = user;
+                if (user) {
+                    // User is signed in
+                    document.getElementById('authButtons').style.display = 'none';
+                    document.getElementById('userInfo').style.display = 'flex';
+                    document.getElementById('mobileAuthButtons').style.display = 'none';
+                    document.getElementById('mobileUserInfo').style.display = 'block';
+                    
+                    // Update user avatar
+                    const avatar = document.getElementById('userAvatar');
+                    if (user.photoURL) {
+                        avatar.innerHTML = `<img src="${user.photoURL}" class="user-avatar" alt="${user.displayName}">`;
+                    } else {
+                        const initials = getInitials(user.displayName || user.email);
+                        avatar.textContent = initials;
+                        avatar.style.backgroundColor = getColorFromString(user.email);
+                    }
+                    
+                    // Enable protected features
+                    document.getElementById('addIdeaLink').classList.remove('disabled');
+                    document.getElementById('mobileAddIdeaLink').classList.remove('disabled');
+                    
+                    // Check if user is admin
+                    await checkAdminStatus(user.uid);
+                    
+                    // Update user last seen
+                    updateUserLastSeen();
+                    
+                    // Load user-specific data
+                    loadUserIdeas();
+                    loadUsers();
+                    loadFeed();
+                } else {
+                    // User is signed out
+                    document.getElementById('authButtons').style.display = 'block';
+                    document.getElementById('userInfo').style.display = 'none';
+                    document.getElementById('mobileAuthButtons').style.display = 'block';
+                    document.getElementById('mobileUserInfo').style.display = 'none';
+                    
+                    // Disable protected features
+                    document.getElementById('addIdeaLink').classList.add('disabled');
+                    document.getElementById('mobileAddIdeaLink').classList.add('disabled');
+                    
+                    // Hide admin panel
+                    document.getElementById('adminPanel').style.display = 'none';
+                    
+                    // Show login prompts in protected sections
+                    if (currentSection === 'addIdea') {
+                        document.getElementById('addIdeaForm').style.display = 'none';
+                        document.getElementById('addIdeaLoginPrompt').style.display = 'block';
+                    }
+                    
+                    if (currentSection === 'feed') {
+                        document.getElementById('feedPostForm').style.display = 'none';
+                        document.getElementById('feedLoginPrompt').style.display = 'block';
+                    }
+                    
+                    // Clear chat listeners
+                    Object.values(chatListeners).forEach(unsubscribe => unsubscribe());
+                    chatListeners = {};
+                }
+            });
+        }
+
+        async function checkAdminStatus(uid) {
+            try {
+                const userDoc = await db.collection('users').doc(uid).get();
+                if (userDoc.exists && userDoc.data().isAdmin) {
+                    document.getElementById('adminPanel').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error checking admin status:', error);
+            }
+        }
+
+        function updateUserLastSeen() {
+            if (!currentUser) return;
+            
+            db.collection('users').doc(currentUser.uid).set({
+                lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+                displayName: currentUser.displayName || currentUser.email.split('@')[0],
+                email: currentUser.email,
+                photoURL: currentUser.photoURL || null
+            }, { merge: true }).catch(error => {
+                console.error('Error updating user last seen:', error);
+            });
+        }
+
+        function getInitials(name) {
+            if (!name) return '?';
+            return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        }
+
+        function getColorFromString(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const hue = hash % 360;
+            return `hsl(${hue}, 70%, 60%)`;
+        }
+
+        // Login/Signup Functions
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+            showLoginForm();
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+        }
+
+        function showLoginForm() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('resetPasswordForm').style.display = 'none';
+        }
+
+        function showResetPasswordForm() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('resetPasswordForm').style.display = 'block';
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showAlert('Please enter both email and password', 'error');
+                return;
+            }
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                closeLoginModal();
+                showAlert('Successfully signed in!', 'success');
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        }
+
+        async function signup() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showAlert('Please enter both email and password', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showAlert('Password must be at least 6 characters', 'error');
+                return;
+            }
+            
+            try {
+                await auth.createUserWithEmailAndPassword(email, password);
+                closeLoginModal();
+                showAlert('Account created successfully!', 'success');
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        }
+
+        async function loginWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            
+            try {
+                await auth.signInWithPopup(provider);
+                closeLoginModal();
+                showAlert('Successfully signed in with Google!', 'success');
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        }
+
+        async function sendPasswordReset() {
+            const email = document.getElementById('resetEmail').value;
+            
+            if (!email) {
+                showAlert('Please enter your email address', 'error');
+                return;
+            }
+            
+            try {
+                await auth.sendPasswordResetEmail(email);
+                showAlert('Password reset email sent! Check your inbox.', 'success');
+                showLoginForm();
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        }
+
+        async function logout() {
+            try {
+                await auth.signOut();
+                showAlert('Successfully signed out', 'success');
+                if (currentSection === 'addIdea' || currentSection === 'feed' || currentSection === 'chat') {
+                    showSection('dashboard');
+                }
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        }
+
+        async function changePassword() {
+            if (!currentUser) {
+                showAlert('Please sign in to change your password', 'error');
+                return;
+            }
+            
+            if (!currentUser.emailVerified && currentUser.providerData[0].providerId === 'password') {
+                showAlert('Please verify your email before changing password', 'warning');
+                return;
+            }
+            
+            const newPassword = prompt('Enter your new password (min 6 characters):');
+            if (!newPassword || newPassword.length < 6) {
+                showAlert('Password must be at least 6 characters', 'error');
+                return;
+            }
+            
+            try {
+                await currentUser.updatePassword(newPassword);
+                showAlert('Password updated successfully!', 'success');
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        }
+
+        // Navigation Functions
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(`${sectionId}Section`).style.display = 'block';
+            currentSection = sectionId;
+            
+            // Add active class to corresponding nav links
+            document.querySelectorAll(`.nav-link[onclick*="${sectionId}"]`).forEach(link => {
+                link.classList.add('active');
+            });
+            
+            // Handle section-specific initialization
+            switch(sectionId) {
+                case 'dashboard':
+                    if (!currentIdea) {
+                        generateIdea();
+                    }
+                    break;
+                case 'addIdea':
+                    if (currentUser) {
+                        document.getElementById('addIdeaForm').style.display = 'block';
+                        document.getElementById('addIdeaLoginPrompt').style.display = 'none';
+                    } else {
+                        document.getElementById('addIdeaForm').style.display = 'none';
+                        document.getElementById('addIdeaLoginPrompt').style.display = 'block';
+                    }
+                    break;
+                case 'feed':
+                    if (currentUser) {
+                        document.getElementById('feedPostForm').style.display = 'block';
+                        document.getElementById('feedLoginPrompt').style.display = 'none';
+                    } else {
+                        document.getElementById('feedPostForm').style.display = 'none';
+                        document.getElementById('feedLoginPrompt').style.display = 'block';
+                    }
+                    break;
+                case 'chat':
+                    if (!currentUser) {
+                        showAlert('Please sign in to use the chat feature', 'warning');
+                        showSection('dashboard');
+                    }
+                    break;
+            }
+            
+            // Close mobile nav if open
+            document.getElementById('mobileNav').classList.remove('active');
+        }
+
+        function toggleMobileNav() {
+            const mobileNav = document.getElementById('mobileNav');
+            mobileNav.classList.toggle('active');
+            
+            // Animate hamburger icon
+            const hamburger = document.getElementById('hamburgerBtn');
+            hamburger.classList.toggle('active');
+        }
+
+        // Idea Generator Functions
+        function loadSeededIdeas() {
+            seededIdeas = [...seedIdeas];
+            allIdeas = [...seededIdeas];
+            updateIdeaPool();
+        }
+
+        async function loadUserIdeas() {
+            try {
+                const snapshot = await db.collection('ideas').where('seeded', '==', false).get();
+                userIdeas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                updateIdeaPool();
+            } catch (error) {
+                console.error('Error loading user ideas:', error);
+            }
+        }
+
+        function updateIdeaPool() {
+            allIdeas = [...seededIdeas, ...userIdeas];
+        }
+
+        function setCategoryFilter(category) {
+            currentCategoryFilter = category;
+            
+            // Update active button
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Regenerate idea with new filter
+            if (currentIdea) {
+                generateIdea();
+            }
+        }
+
+        function generateIdea() {
+            if (allIdeas.length === 0) {
+                document.getElementById('ideaDisplay').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <p>No ideas available. Please add some ideas first.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Filter ideas by category if needed
+            let filteredIdeas = allIdeas;
+            if (currentCategoryFilter !== 'all') {
+                filteredIdeas = allIdeas.filter(idea => idea.category === currentCategoryFilter);
+            }
+            
+            if (filteredIdeas.length === 0) {
+                document.getElementById('ideaDisplay').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-filter"></i>
+                        </div>
+                        <p>No ideas found for the selected category. Try a different filter.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Select random idea
+            const randomIndex = Math.floor(Math.random() * filteredIdeas.length);
+            currentIdea = filteredIdeas[randomIndex];
+            
+            // Update display
+            displayIdea(currentIdea);
+            
+            // Update save button state
+            updateSaveButton();
+        }
+
+        function displayIdea(idea) {
+            const categoryColors = {
+                software: '#007bff',
+                iot: '#28a745',
+                integrated: '#6f42c1'
+            };
+            
+            const categoryLabels = {
+                software: 'Software',
+                iot: 'IoT Based',
+                integrated: 'Integrated (Software + IoT)'
+            };
+            
+            let linksHTML = '';
+            if (idea.relatedLinks && idea.relatedLinks.length > 0) {
+                linksHTML = `
+                    <div class="related-links">
+                        <h4><i class="fas fa-external-link-alt"></i> Related Studies</h4>
+                        <div class="links-list">
+                            ${idea.relatedLinks.map((link, index) => `
+                                <a href="${link}" target="_blank" class="link-item">
+                                    <i class="fas fa-file-pdf"></i>
+                                    <span class="url-text">Related Study ${index + 1}</span>
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            const ideaHTML = `
+                <h2 class="idea-title">${idea.title}</h2>
+                <div class="idea-category" style="background-color: ${categoryColors[idea.category] || '#CFA500'}">
+                    ${categoryLabels[idea.category] || idea.category}
+                </div>
+                <p class="idea-description">${idea.description}</p>
+                ${linksHTML}
+                ${idea.seeded ? '<p style="font-size: 0.875rem; color: var(--text-secondary);"><i class="fas fa-seedling"></i> Seeded Idea</p>' : ''}
+            `;
+            
+            document.getElementById('ideaDisplay').innerHTML = ideaHTML;
+        }
+
+        function updateSaveButton() {
+            const saveBtn = document.getElementById('saveFavoriteBtn');
+            if (!currentUser) {
+                saveBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign in to Save';
+                saveBtn.onclick = () => showLoginModal();
+                saveBtn.className = 'btn btn-secondary';
+            } else {
+                saveBtn.innerHTML = '<i class="far fa-heart"></i> Save to Favorites';
+                saveBtn.onclick = () => saveFavorite();
+                saveBtn.className = 'btn btn-primary';
+                
+                // Check if already saved
+                checkIfSaved().then(isSaved => {
+                    if (isSaved) {
+                        saveBtn.innerHTML = '<i class="fas fa-heart"></i> Already Saved';
+                        saveBtn.className = 'btn btn-outline';
+                        saveBtn.disabled = true;
+                    }
+                });
+            }
+        }
+
+        async function checkIfSaved() {
+            if (!currentUser || !currentIdea) return false;
+            
+            try {
+                const doc = await db.collection('favorites')
+                    .doc(currentUser.uid)
+                    .collection('ideas')
+                    .doc(currentIdea.id || currentIdea.title.replace(/\s+/g, '_'))
+                    .get();
+                
+                return doc.exists;
+            } catch (error) {
+                console.error('Error checking if saved:', error);
+                return false;
+            }
+        }
+
+        async function saveFavorite() {
+            if (!currentUser) {
+                showAlert('Please sign in to save favorites', 'warning');
+                showLoginModal();
+                return;
+            }
+            
+            if (!currentIdea) {
+                showAlert('No idea to save', 'error');
+                return;
+            }
+            
+            try {
+                const favoriteData = {
+                    ideaId: currentIdea.id || currentIdea.title.replace(/\s+/g, '_'),
+                    title: currentIdea.title,
+                    description: currentIdea.description,
+                    category: currentIdea.category,
+                    relatedLinks: currentIdea.relatedLinks || [],
+                    savedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    seeded: currentIdea.seeded || false
+                };
+                
+                await db.collection('favorites')
+                    .doc(currentUser.uid)
+                    .collection('ideas')
+                    .doc(favoriteData.ideaId)
+                    .set(favoriteData);
+                
+                showAlert('Idea saved to favorites!', 'success');
+                updateSaveButton();
+            } catch (error) {
+                showAlert('Error saving favorite: ' + error.message, 'error');
+            }
+        }
+
+        function showFavorites() {
+            if (!currentUser) {
+                showAlert('Please sign in to view favorites', 'warning');
+                showLoginModal();
+                return;
+            }
+            
+            loadFavorites();
+            document.getElementById('favoritesModal').classList.add('active');
+        }
+
+        async function loadFavorites() {
+            try {
+                const snapshot = await db.collection('favorites')
+                    .doc(currentUser.uid)
+                    .collection('ideas')
+                    .orderBy('savedAt', 'desc')
+                    .get();
+                
+                const favoritesList = document.getElementById('favoritesList');
+                
+                if (snapshot.empty) {
+                    favoritesList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="far fa-heart"></i>
+                            </div>
+                            <p>No favorites saved yet.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let favoritesHTML = '';
+                snapshot.forEach(doc => {
+                    const fav = doc.data();
+                    favoritesHTML += `
+                        <div class="url-item" style="margin-bottom: 1rem;">
+                            <div style="flex: 1;">
+                                <strong>${fav.title}</strong>
+                                <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                                    ${fav.category} • ${new Date(fav.savedAt?.toDate() || Date.now()).toLocaleDateString()}
+                                </div>
+                            </div>
+                            <button class="btn btn-small btn-secondary" onclick="removeFavorite('${doc.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+                
+                favoritesList.innerHTML = favoritesHTML;
+            } catch (error) {
+                console.error('Error loading favorites:', error);
+                document.getElementById('favoritesList').innerHTML = `
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle"></i> Error loading favorites
+                    </div>
+                `;
+            }
+        }
+
+        async function removeFavorite(favoriteId) {
+            try {
+                await db.collection('favorites')
+                    .doc(currentUser.uid)
+                    .collection('ideas')
+                    .doc(favoriteId)
+                    .delete();
+                
+                showAlert('Favorite removed', 'success');
+                loadFavorites();
+                
+                // Update save button if current idea was removed
+                if (currentIdea && (currentIdea.id === favoriteId || currentIdea.title.replace(/\s+/g, '_') === favoriteId)) {
+                    updateSaveButton();
+                }
+            } catch (error) {
+                showAlert('Error removing favorite: ' + error.message, 'error');
+            }
+        }
+
+        function closeFavorites() {
+            document.getElementById('favoritesModal').classList.remove('active');
+        }
+
+        function exportFavorites() {
+            if (!currentUser) {
+                showAlert('Please sign in to export favorites', 'warning');
+                showLoginModal();
+                return;
+            }
+            
+            // In a real implementation, this would fetch and format CSV data
+            showAlert('Export feature would generate CSV file of favorites', 'info');
+        }
+
+        // Add Idea Functions
+        function addLink() {
+            const linkInput = document.getElementById('ideaLink');
+            const link = linkInput.value.trim();
+            
+            if (!link) {
+                showAlert('Please enter a URL', 'error');
+                return;
+            }
+            
+            // Basic URL validation
+            if (!link.startsWith('http://') && !link.startsWith('https://')) {
+                showAlert('Please enter a valid URL starting with http:// or https://', 'error');
+                return;
+            }
+            
+            const linksList = document.getElementById('linksList');
+            const linkId = 'link_' + Date.now();
+            
+            const linkHTML = `
+                <div class="url-item" id="${linkId}">
+                    <span class="url-text">${link}</span>
+                    <button type="button" class="btn btn-small btn-secondary" onclick="removeLink('${linkId}')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            linksList.innerHTML += linkHTML;
+            linkInput.value = '';
+        }
+
+        function removeLink(linkId) {
+            const linkElement = document.getElementById(linkId);
+            if (linkElement) {
+                linkElement.remove();
+            }
+        }
+
+        async function submitIdea() {
+            if (!currentUser) {
+                showAlert('Please sign in to submit ideas', 'error');
+                showLoginModal();
+                return;
+            }
+            
+            const title = document.getElementById('ideaTitle').value.trim();
+            const category = document.getElementById('ideaCategory').value;
+            const description = document.getElementById('ideaDescription').value.trim();
+            
+            if (!title || !description) {
+                showAlert('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            // Collect links
+            const links = [];
+            document.querySelectorAll('#linksList .url-item .url-text').forEach(item => {
+                links.push(item.textContent.trim());
+            });
+            
+            try {
+                const ideaData = {
+                    title,
+                    description,
+                    category,
+                    relatedLinks: links,
+                    authorUid: currentUser.uid,
+                    authorName: currentUser.displayName || currentUser.email.split('@')[0],
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    likesCount: 0,
+                    seeded: false
+                };
+                
+                // Add to Firestore
+                const docRef = await db.collection('ideas').add(ideaData);
+                
+                // Add to local array for immediate use
+                const newIdea = {
+                    id: docRef.id,
+                    ...ideaData
+                };
+                
+                userIdeas.push(newIdea);
+                updateIdeaPool();
+                
+                // Reset form
+                document.getElementById('ideaTitle').value = '';
+                document.getElementById('ideaDescription').value = '';
+                document.getElementById('linksList').innerHTML = '';
+                
+                showAlert('Idea submitted successfully! It will now appear in the generator.', 'success');
+                
+                // Show the new idea
+                currentIdea = newIdea;
+                displayIdea(currentIdea);
+                updateSaveButton();
+                
+                // Switch back to dashboard
+                showSection('dashboard');
+            } catch (error) {
+                showAlert('Error submitting idea: ' + error.message, 'error');
+            }
+        }
+
+        // Feed Functions
+        async function loadFeed() {
+            const feedContainer = document.getElementById('feedContainer');
+            
+            try {
+                // Clear existing listeners
+                feedListeners.forEach(unsubscribe => unsubscribe());
+                feedListeners = [];
+                
+                // Set up real-time listener for feed posts
+                const unsubscribe = db.collection('feed')
+                    .orderBy('createdAt', 'desc')
+                    .limit(20)
+                    .onSnapshot(snapshot => {
+                        feedContainer.innerHTML = '';
+                        
+                        if (snapshot.empty) {
+                            feedContainer.innerHTML = `
+                                <div class="empty-state">
+                                    <div class="empty-icon">
+                                        <i class="fas fa-newspaper"></i>
+                                    </div>
+                                    <p>No posts yet. Be the first to share!</p>
+                                </div>
+                            `;
+                            return;
+                        }
+                        
+                        snapshot.forEach(doc => {
+                            const post = { id: doc.id, ...doc.data() };
+                            displayPost(post, feedContainer);
+                        });
+                    }, error => {
+                        console.error('Error loading feed:', error);
+                        feedContainer.innerHTML = `
+                            <div class="alert alert-error">
+                                <i class="fas fa-exclamation-circle"></i> Error loading feed
+                            </div>
+                        `;
+                    });
+                
+                feedListeners.push(unsubscribe);
+            } catch (error) {
+                console.error('Error setting up feed listener:', error);
+            }
+        }
+
+        function displayPost(post, container) {
+            const postDate = post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString() : 'Recently';
+            
+            let imageHTML = '';
+            if (post.imageBase64) {
+                imageHTML = `<img src="${post.imageBase64}" class="post-image" alt="Post image">`;
+            }
+            
+            let likesCount = post.likes ? Object.keys(post.likes).length : 0;
+            const isLiked = currentUser && post.likes && post.likes[currentUser.uid];
+            
+            const postHTML = `
+                <div class="post-card" id="post-${post.id}">
+                    <div class="post-header">
+                        <div class="avatar-initials" style="width: 40px; height: 40px; font-size: 0.875rem;">
+                            ${getInitials(post.authorName || 'User')}
+                        </div>
+                        <div style="flex: 1;">
+                            <div class="post-author">${post.authorName || 'Anonymous'}</div>
+                            <div class="post-date">${postDate}</div>
+                        </div>
+                        ${currentUser && currentUser.uid === post.authorUid ? `
+                            <button class="btn btn-small btn-secondary" onclick="deletePost('${post.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="post-content">${post.contentText}</div>
+                    
+                    ${imageHTML}
+                    
+                    <div class="post-actions">
+                        <button class="action-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}')">
+                            <i class="fas fa-heart"></i> ${likesCount}
+                        </button>
+                        <button class="action-btn" onclick="toggleComments('${post.id}')">
+                            <i class="fas fa-comment"></i> Comment
+                        </button>
+                    </div>
+                    
+                    <div class="comments-section" id="comments-${post.id}" style="display: none;">
+                        <div class="comment-form">
+                            <input type="text" class="comment-input" id="comment-${post.id}" placeholder="Write a comment...">
+                            <button class="btn btn-primary btn-small" onclick="addComment('${post.id}')">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="comments-list" id="comments-list-${post.id}">
+                            <!-- Comments will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML += postHTML;
+            
+            // Load comments for this post
+            loadComments(post.id);
+        }
+
+        function previewImage() {
+            const fileInput = document.getElementById('postImage');
+            const preview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImage');
+            
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+
+        function clearImagePreview() {
+            document.getElementById('postImage').value = '';
+            document.getElementById('imagePreview').style.display = 'none';
+        }
+
+        async function createPost() {
+            if (!currentUser) {
+                showAlert('Please sign in to create posts', 'error');
+                showLoginModal();
+                return;
+            }
+            
+            const content = document.getElementById('postContent').value.trim();
+            const imageFile = document.getElementById('postImage').files[0];
+            
+            if (!content && !imageFile) {
+                showAlert('Please add some text or an image to your post', 'error');
+                return;
+            }
+            
+            try {
+                let imageBase64 = null;
+                if (imageFile) {
+                    // Check file size (max 2MB)
+                    if (imageFile.size > 2 * 1024 * 1024) {
+                        showAlert('Image size must be less than 2MB', 'error');
+                        return;
+                    }
+                    
+                    imageBase64 = await convertImageToBase64(imageFile);
+                }
+                
+                const postData = {
+                    authorUid: currentUser.uid,
+                    authorName: currentUser.displayName || currentUser.email.split('@')[0],
+                    contentText: content,
+                    imageBase64: imageBase64,
+                    likes: {},
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                await db.collection('feed').add(postData);
+                
+                // Clear form
+                document.getElementById('postContent').value = '';
+                clearImagePreview();
+                
+                showAlert('Post created successfully!', 'success');
+            } catch (error) {
+                showAlert('Error creating post: ' + error.message, 'error');
+            }
+        }
+
+        function convertImageToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function toggleLike(postId) {
+            if (!currentUser) {
+                showAlert('Please sign in to like posts', 'warning');
+                showLoginModal();
+                return;
+            }
+            
+            try {
+                const postRef = db.collection('feed').doc(postId);
+                const postDoc = await postRef.get();
+                
+                if (!postDoc.exists) {
+                    showAlert('Post not found', 'error');
+                    return;
+                }
+                
+                const post = postDoc.data();
+                const likes = post.likes || {};
+                const isLiked = likes[currentUser.uid];
+                
+                if (isLiked) {
+                    delete likes[currentUser.uid];
+                } else {
+                    likes[currentUser.uid] = true;
+                }
+                
+                await postRef.update({ likes });
+                
+                // Update UI
+                const likeBtn = document.querySelector(`#post-${postId} .action-btn`);
+                const likeCount = Object.keys(likes).length;
+                
+                if (isLiked) {
+                    likeBtn.classList.remove('liked');
+                } else {
+                    likeBtn.classList.add('liked');
+                }
+                
+                likeBtn.innerHTML = `<i class="fas fa-heart"></i> ${likeCount}`;
+            } catch (error) {
+                showAlert('Error updating like: ' + error.message, 'error');
+            }
+        }
+
+        function toggleComments(postId) {
+            const commentsSection = document.getElementById(`comments-${postId}`);
+            commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
+        }
+
+        async function loadComments(postId) {
+            try {
+                const snapshot = await db.collection('feed')
+                    .doc(postId)
+                    .collection('comments')
+                    .orderBy('createdAt', 'asc')
+                    .get();
+                
+                const commentsList = document.getElementById(`comments-list-${postId}`);
+                commentsList.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    commentsList.innerHTML = '<p style="color: var(--text-secondary); font-size: 0.875rem;">No comments yet.</p>';
+                    return;
+                }
+                
+                snapshot.forEach(doc => {
+                    const comment = { id: doc.id, ...doc.data() };
+                    const commentDate = comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleString() : 'Recently';
+                    
+                    const commentHTML = `
+                        <div class="comment-item">
+                            <div class="avatar-initials" style="width: 30px; height: 30px; font-size: 0.75rem;">
+                                ${getInitials(comment.authorName || 'User')}
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 0.875rem;">${comment.authorName || 'Anonymous'}</div>
+                                <div style="font-size: 0.875rem; margin-top: 0.25rem;">${comment.text}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">${commentDate}</div>
+                            </div>
+                            ${currentUser && currentUser.uid === comment.authorUid ? `
+                                <button class="btn btn-small btn-secondary" style="padding: 0.25rem 0.5rem;" onclick="deleteComment('${postId}', '${doc.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                    
+                    commentsList.innerHTML += commentHTML;
+                });
+            } catch (error) {
+                console.error('Error loading comments:', error);
+            }
+        }
+
+        async function addComment(postId) {
+            if (!currentUser) {
+                showAlert('Please sign in to comment', 'warning');
+                showLoginModal();
+                return;
+            }
+            
+            const commentInput = document.getElementById(`comment-${postId}`);
+            const text = commentInput.value.trim();
+            
+            if (!text) {
+                showAlert('Please enter a comment', 'error');
+                return;
+            }
+            
+            try {
+                const commentData = {
+                    authorUid: currentUser.uid,
+                    authorName: currentUser.displayName || currentUser.email.split('@')[0],
+                    text: text,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                await db.collection('feed')
+                    .doc(postId)
+                    .collection('comments')
+                    .add(commentData);
+                
+                commentInput.value = '';
+                showAlert('Comment added!', 'success');
+                
+                // Reload comments
+                loadComments(postId);
+            } catch (error) {
+                showAlert('Error adding comment: ' + error.message, 'error');
+            }
+        }
+
+        async function deletePost(postId) {
+            if (!confirm('Are you sure you want to delete this post?')) return;
+            
+            try {
+                // Delete all comments first
+                const commentsSnapshot = await db.collection('feed')
+                    .doc(postId)
+                    .collection('comments')
+                    .get();
+                
+                const deletePromises = commentsSnapshot.docs.map(doc => doc.ref.delete());
+                await Promise.all(deletePromises);
+                
+                // Delete the post
+                await db.collection('feed').doc(postId).delete();
+                
+                showAlert('Post deleted successfully', 'success');
+            } catch (error) {
+                showAlert('Error deleting post: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteComment(postId, commentId) {
+            if (!confirm('Are you sure you want to delete this comment?')) return;
+            
+            try {
+                await db.collection('feed')
+                    .doc(postId)
+                    .collection('comments')
+                    .doc(commentId)
+                    .delete();
+                
+                showAlert('Comment deleted', 'success');
+                loadComments(postId);
+            } catch (error) {
+                showAlert('Error deleting comment: ' + error.message, 'error');
+            }
+        }
+
+        // Chat Functions
+        async function loadUsers() {
+            if (!currentUser) return;
+            
+            const usersList = document.getElementById('usersList');
+            
+            try {
+                const snapshot = await db.collection('users').get();
+                users = [];
+                
+                usersList.innerHTML = '';
+                
+                snapshot.forEach(doc => {
+                    const user = { id: doc.id, ...doc.data() };
+                    
+                    // Don't show current user in the list
+                    if (user.id === currentUser.uid) return;
+                    
+                    users.push(user);
+                    
+                    const userElement = createUserElement(user);
+                    usersList.appendChild(userElement);
+                });
+                
+                if (users.length === 0) {
+                    usersList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <p>No other users found.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+                usersList.innerHTML = `
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle"></i> Error loading users
+                    </div>
+                `;
+            }
+        }
+
+        function createUserElement(user) {
+            const div = document.createElement('div');
+            div.className = 'user-item';
+            div.onclick = () => openChat(user);
+            
+            const lastSeen = user.lastSeen ? new Date(user.lastSeen.toDate()) : null;
+            const isOnline = lastSeen && (Date.now() - lastSeen.getTime() < 5 * 60 * 1000); // 5 minutes
+            
+            div.innerHTML = `
+                <div class="avatar-initials" style="width: 40px; height: 40px;">
+                    ${getInitials(user.displayName || user.email)}
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600;">${user.displayName || user.email.split('@')[0]}</div>
+                    <div style="font-size: 0.875rem; color: var(--text-secondary);">${user.email}</div>
+                </div>
+                <div class="user-status ${isOnline ? 'online' : 'offline'}"></div>
+            `;
+            
+            return div;
+        }
+
+        function searchUsers(query) {
+            const usersList = document.getElementById('usersList');
+            usersList.innerHTML = '';
+            
+            if (!query.trim()) {
+                // Show all users if search is empty
+                users.forEach(user => {
+                    usersList.appendChild(createUserElement(user));
+                });
+                return;
+            }
+            
+            const lowerQuery = query.toLowerCase();
+            const filteredUsers = users.filter(user => 
+                (user.displayName && user.displayName.toLowerCase().includes(lowerQuery)) ||
+                user.email.toLowerCase().includes(lowerQuery)
+            );
+            
+            if (filteredUsers.length === 0) {
+                usersList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <p>No users found matching "${query}"</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredUsers.forEach(user => {
+                usersList.appendChild(createUserElement(user));
+            });
+        }
+
+        async function openChat(user) {
+            if (!currentUser) return;
+            
+            currentChatPartner = user;
+            
+            // Update UI
+            document.getElementById('chatPartnerAvatar').textContent = getInitials(user.displayName || user.email);
+            document.getElementById('chatPartnerName').textContent = user.displayName || user.email.split('@')[0];
+            
+            const lastSeen = user.lastSeen ? new Date(user.lastSeen.toDate()) : null;
+            const isOnline = lastSeen && (Date.now() - lastSeen.getTime() < 5 * 60 * 1000);
+            document.getElementById('chatPartnerStatus').className = `user-status ${isOnline ? 'online' : 'offline'}`;
+            
+            document.getElementById('chatInputArea').style.display = 'flex';
+            
+            // Load messages
+            await loadChatMessages(user.id);
+            
+            // Set up real-time listener for new messages
+            setupChatListener(user.id);
+        }
+
+        async function getOrCreateChatId(userId) {
+            if (!currentUser) return null;
+            
+            // Create a consistent chat ID for the two users
+            const participants = [currentUser.uid, userId].sort();
+            const chatId = participants.join('_');
+            
+            // Check if chat already exists
+            const chatRef = db.collection('chats').doc(chatId);
+            const chatDoc = await chatRef.get();
+            
+            if (!chatDoc.exists) {
+                await chatRef.set({
+                    participants: participants,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+            
+            return chatId;
+        }
+
+        async function loadChatMessages(userId) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.innerHTML = '<div class="loading"><div class="loading-spinner"></div><p>Loading messages...</p></div>';
+            
+            try {
+                const chatId = await getOrCreateChatId(userId);
+                if (!chatId) return;
+                
+                const snapshot = await db.collection('chats')
+                    .doc(chatId)
+                    .collection('messages')
+                    .orderBy('createdAt', 'asc')
+                    .limit(50)
+                    .get();
+                
+                messagesContainer.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    messagesContainer.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <p>No messages yet. Start the conversation!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                snapshot.forEach(doc => {
+                    const message = { id: doc.id, ...doc.data() };
+                    displayMessage(message, messagesContainer);
+                });
+                
+                // Scroll to bottom
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            } catch (error) {
+                console.error('Error loading messages:', error);
+                messagesContainer.innerHTML = `
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle"></i> Error loading messages
+                    </div>
+                `;
+            }
+        }
+
+        function setupChatListener(userId) {
+            // Remove existing listener for this chat
+            if (chatListeners[userId]) {
+                chatListeners[userId]();
+            }
+            
+            getOrCreateChatId(userId).then(chatId => {
+                if (!chatId) return;
+                
+                const unsubscribe = db.collection('chats')
+                    .doc(chatId)
+                    .collection('messages')
+                    .orderBy('createdAt', 'asc')
+                    .onSnapshot(snapshot => {
+                        const messagesContainer = document.getElementById('messagesContainer');
+                        const wasAtBottom = messagesContainer.scrollHeight - messagesContainer.scrollTop <= messagesContainer.clientHeight + 100;
+                        
+                        snapshot.docChanges().forEach(change => {
+                            if (change.type === 'added') {
+                                const message = { id: change.doc.id, ...change.doc.data() };
+                                displayMessage(message, messagesContainer);
+                            }
+                        });
+                        
+                        // Scroll to bottom if user was at bottom
+                        if (wasAtBottom) {
+                            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                        }
+                    });
+                
+                chatListeners[userId] = unsubscribe;
+            });
+        }
+
+        function displayMessage(message, container) {
+            const isSent = message.senderUid === currentUser.uid;
+            const messageTime = message.createdAt ? new Date(message.createdAt.toDate()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Now';
+            
+            let imageHTML = '';
+            if (message.imageBase64) {
+                imageHTML = `<img src="${message.imageBase64}" class="message-image" alt="Shared image">`;
+            }
+            
+            const messageHTML = `
+                <div class="message ${isSent ? 'sent' : 'received'}">
+                    <div>${message.text || ''}</div>
+                    ${imageHTML}
+                    <div class="message-time">${messageTime}</div>
+                </div>
+            `;
+            
+            container.innerHTML += messageHTML;
+        }
+
+        async function sendMessage() {
+            if (!currentUser || !currentChatPartner) {
+                showAlert('Please select a user to chat with', 'error');
+                return;
+            }
+            
+            const messageInput = document.getElementById('messageInput');
+            const text = messageInput.value.trim();
+            
+            if (!text) {
+                showAlert('Please enter a message', 'error');
+                return;
+            }
+            
+            try {
+                const chatId = await getOrCreateChatId(currentChatPartner.id);
+                if (!chatId) return;
+                
+                const messageData = {
+                    senderUid: currentUser.uid,
+                    text: text,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                await db.collection('chats')
+                    .doc(chatId)
+                    .collection('messages')
+                    .add(messageData);
+                
+                // Update lastUpdated timestamp
+                await db.collection('chats').doc(chatId).update({
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                messageInput.value = '';
+            } catch (error) {
+                showAlert('Error sending message: ' + error.message, 'error');
+            }
+        }
+
+        async function sendImageMessage() {
+            if (!currentUser || !currentChatPartner) {
+                showAlert('Please select a user to chat with', 'error');
+                return;
+            }
+            
+            const fileInput = document.getElementById('chatImageUpload');
+            const file = fileInput.files[0];
+            
+            if (!file) return;
+            
+            // Check file size (max 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                showAlert('Image size must be less than 2MB', 'error');
+                fileInput.value = '';
+                return;
+            }
+            
+            try {
+                const imageBase64 = await convertImageToBase64(file);
+                const chatId = await getOrCreateChatId(currentChatPartner.id);
+                
+                const messageData = {
+                    senderUid: currentUser.uid,
+                    text: '',
+                    imageBase64: imageBase64,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                await db.collection('chats')
+                    .doc(chatId)
+                    .collection('messages')
+                    .add(messageData);
+                
+                // Update lastUpdated timestamp
+                await db.collection('chats').doc(chatId).update({
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                fileInput.value = '';
+            } catch (error) {
+                showAlert('Error sending image: ' + error.message, 'error');
+            }
+        }
+
+        // Theme Functions
+        function setupTheme() {
+            const themeToggle = document.getElementById('themeToggle');
+            const savedTheme = localStorage.getItem('innovateit-theme');
+            
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                themeToggle.checked = true;
+            }
+            
+            // Update theme in Firebase if user is logged in
+            if (currentUser && savedTheme) {
+                db.collection('users').doc(currentUser.uid).set({
+                    themePreference: savedTheme
+                }, { merge: true });
+            }
+        }
+
+        function toggleTheme() {
+            const isDarkMode = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('innovateit-theme', isDarkMode ? 'dark' : 'light');
+            
+            // Update theme in Firebase if user is logged in
+            if (currentUser) {
+                db.collection('users').doc(currentUser.uid).set({
+                    themePreference: isDarkMode ? 'dark' : 'light'
+                }, { merge: true });
+            }
+        }
+
+        // About Modal
+        function showAboutModal() {
+            document.getElementById('aboutModal').classList.add('active');
+        }
+
+        function closeAboutModal() {
+            document.getElementById('aboutModal').classList.remove('active');
+        }
+
+        // Admin Functions
+        function showAdminModal() {
+            document.getElementById('adminModal').classList.add('active');
+            loadModerationContent();
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.remove('active');
+        }
+
+        async function loadModerationContent() {
+            const type = document.getElementById('moderationType').value;
+            const contentDiv = document.getElementById('moderationContent');
+            
+            contentDiv.innerHTML = '<div class="loading"><div class="loading-spinner"></div><p>Loading content...</p></div>';
+            
+            try {
+                let snapshot;
+                let contentHTML = '';
+                
+                switch(type) {
+                    case 'ideas':
+                        snapshot = await db.collection('ideas').where('seeded', '==', false).get();
+                        snapshot.forEach(doc => {
+                            const idea = doc.data();
+                            contentHTML += `
+                                <div class="url-item" style="margin-bottom: 1rem;">
+                                    <div style="flex: 1;">
+                                        <strong>${idea.title}</strong>
+                                        <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                                            By: ${idea.authorName || 'Unknown'} • ${idea.category}
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-small btn-danger" onclick="adminDeleteIdea('${doc.id}')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            `;
+                        });
+                        break;
+                        
+                    case 'posts':
+                        snapshot = await db.collection('feed').orderBy('createdAt', 'desc').limit(50).get();
+                        snapshot.forEach(doc => {
+                            const post = doc.data();
+                            const postDate = post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString() : 'Recently';
+                            contentHTML += `
+                                <div class="post-card" style="margin-bottom: 1rem;">
+                                    <div class="post-header">
+                                        <div>${post.authorName || 'Anonymous'}</div>
+                                        <div class="post-date">${postDate}</div>
+                                    </div>
+                                    <div class="post-content" style="max-height: 100px; overflow: hidden;">${post.contentText}</div>
+                                    <div style="margin-top: 1rem;">
+                                        <button class="btn btn-small btn-danger" onclick="adminDeletePost('${doc.id}')">
+                                            <i class="fas fa-trash"></i> Delete Post
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        break;
+                        
+                    case 'comments':
+                        // This would require a more complex query in a real implementation
+                        contentHTML = '<div class="alert alert-info">Comment moderation requires more complex queries. Focus on post moderation for now.</div>';
+                        break;
+                }
+                
+                if (!contentHTML) {
+                    contentHTML = '<div class="empty-state"><p>No content found for moderation.</p></div>';
+                }
+                
+                contentDiv.innerHTML = contentHTML;
+            } catch (error) {
+                console.error('Error loading moderation content:', error);
+                contentDiv.innerHTML = `
+                    <div class="alert alert-error">
+                        <i class="fas fa-exclamation-circle"></i> Error loading content
+                    </div>
+                `;
+            }
+        }
+
+        async function adminDeleteIdea(ideaId) {
+            if (!confirm('Are you sure you want to delete this idea? This action cannot be undone.')) return;
+            
+            try {
+                await db.collection('ideas').doc(ideaId).delete();
+                showAlert('Idea deleted successfully', 'success');
+                loadModerationContent();
+                
+                // Remove from local array if present
+                userIdeas = userIdeas.filter(idea => idea.id !== ideaId);
+                updateIdeaPool();
+            } catch (error) {
+                showAlert('Error deleting idea: ' + error.message, 'error');
+            }
+        }
+
+        async function adminDeletePost(postId) {
+            if (!confirm('Are you sure you want to delete this post? This action cannot be undone.')) return;
+            
+            try {
+                await db.collection('feed').doc(postId).delete();
+                showAlert('Post deleted successfully', 'success');
+                loadModerationContent();
+            } catch (error) {
+                showAlert('Error deleting post: ' + error.message, 'error');
+            }
+        }
+
+        // Utility Functions
+        function showAlert(message, type = 'info') {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertId = 'alert_' + Date.now();
+            
+            const alertHTML = `
+                <div class="alert alert-${type}" id="${alertId}">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            alertContainer.innerHTML += alertHTML;
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                const alert = document.getElementById(alertId);
+                if (alert) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+
+        // SEO Optimization
+        // Set meta tags for SEO
+        document.title = "InnovateIT - IT/IS Capstone Title & Idea Generator";
+        
+        // Structured data for search engines
+        const structuredData = {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "InnovateIT - Capstone Idea Generator",
+            "description": "Generate innovative IT/IS capstone project titles and ideas for Software, IoT, and Integrated projects.",
+            "url": window.location.href,
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "Any",
+            "author": {
+                "@type": "Person",
+                "name": "Steven Macapañas"
+            }
+        };
+        
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.textContent = JSON.stringify(structuredData);
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>
